@@ -194,8 +194,10 @@ static void iokit_unmount_complete (DADiskRef disk, DADissenterRef dissenter,
 
 static void iokit_mount_complete (DADiskRef disk, DADissenterRef dissenter,
                                   void *context) {
-    (void) disk; /* suppress warning */
-    (void) dissenter; /* suppress warning */
+    // (void) disk; /* suppress warning */
+    // (void) dissenter; /* suppress warning */
+    const char *diskname = DADiskGetBSDName(disk);
+    fprintf(stderr, "Disk name: %s", diskname);
 
     /* the disc mounts despite whether there is a dessenter */
     BD_DEBUG(DBG_MMC, "Disc mounted\n");
