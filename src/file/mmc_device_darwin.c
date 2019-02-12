@@ -194,12 +194,14 @@ static void iokit_unmount_complete (DADiskRef disk, DADissenterRef dissenter,
 
 static void iokit_mount_complete (DADiskRef disk, DADissenterRef dissenter,
                                   void *context) {
-    // (void) disk; /* suppress warning */
-    // (void) dissenter; /* suppress warning */
-    const char *diskname = DADiskGetBSDName(disk);
-    fprintf(stderr, "Disk name: %s\n", diskname);
-    CFDictionaryRef *diskinfo = DADiskCopyDescription(disk);
-    CFShow(diskinfo);
+    Boolean isMountFinished = false;
+    if (dissenter) {
+        while(!isMountFinished) {
+            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 3, true);
+            CFDictionaryRef dict = DADiskCopyDescription(disk);
+            isMountFinished = CFDictionaryContainsKey(dict, CFSTR("DAVolumePath"));
+        }
+    }
 
     /* the disc mounts despite whether there is a dessenter */
     BD_DEBUG(DBG_MMC, "Disc mounted\n");
