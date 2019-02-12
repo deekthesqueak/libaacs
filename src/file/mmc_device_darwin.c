@@ -196,14 +196,17 @@ static void iokit_mount_complete (DADiskRef disk, DADissenterRef dissenter,
                                   void *context) {
     if (dissenter) {
         Boolean isMountFinished = false;
+        int waitTime = 0;
         BD_DEBUG(DBG_MMC, "Disc mount started, not ready yet\n");
         while (!isMountFinished) {
             CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, true);
+            ++waitTime;
             CFDictionaryRef dict = DADiskCopyDescription(disk);
             if (dict) {
                 isMountFinished = CFDictionaryContainsKey(dict, CFSTR("DAVolumePath"));
             }
         }
+        BD_DEBUG(DBG_MMC, "Waited (%d) seconds", waitTime);
     }
 
     /* the disc mounts despite whether there is a dessenter */
