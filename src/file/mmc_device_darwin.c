@@ -194,12 +194,14 @@ static void iokit_unmount_complete (DADiskRef disk, DADissenterRef dissenter,
 
 static void iokit_mount_complete (DADiskRef disk, DADissenterRef dissenter,
                                   void *context) {
-    Boolean isMountFinished = false;
     if (dissenter) {
-        while(!isMountFinished) {
-            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 3, true);
+        Boolean isMountFinished = false;
+        BD_DEBUG(DBG_MMC, "Disc mount started, not ready yet\n");
+        while (!isMountFinished) {
+            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, true);
             CFDictionaryRef dict = DADiskCopyDescription(disk);
             isMountFinished = CFDictionaryContainsKey(dict, CFSTR("DAVolumePath"));
+            CFRelease (dict);
         }
     }
 
