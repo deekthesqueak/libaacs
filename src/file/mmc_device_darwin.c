@@ -200,7 +200,9 @@ static void iokit_mount_complete (DADiskRef disk, DADissenterRef dissenter,
         while (!isMountFinished) {
             CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, true);
             CFDictionaryRef dict = DADiskCopyDescription(disk);
-            isMountFinished = CFDictionaryContainsKey(dict, CFSTR("DAVolumePath"));
+            if (dict) {
+                isMountFinished = CFDictionaryContainsKey(dict, CFSTR("DAVolumePath"));
+            }
         }
     }
 
